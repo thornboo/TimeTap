@@ -11,7 +11,7 @@
     class="bg-white overflow-hidden pt-2 px-4"
     :style="{ marginTop: safeAreaInsets?.top + 'px' }"
   >
-    <view class="text-center text-3xl mt-8">在这里统计数据显示</view>
+    <view class="text-center text-3xl mt-8">数据统计</view>
   </view>
 </template>
 

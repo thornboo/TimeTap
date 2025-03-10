@@ -38,6 +38,12 @@ export default defineUniPages({
         pagePath: 'pages/statistics/statistics',
         text: '统计',
       },
+      {
+        iconPath: 'static/tabbar/example.png',
+        selectedIconPath: 'static/tabbar/exampleHL.png',
+        pagePath: 'pages/demo/demo',
+        text: 'Demo',
+      },
     ],
   },
 })

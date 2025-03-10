@@ -5,12 +5,13 @@
 
 interface NavigateToOptions {
   url: "/pages/index/index" |
+       "/pages/demo/demo" |
        "/pages/statistics/statistics";
 }
 interface RedirectToOptions extends NavigateToOptions {}
 
 interface SwitchTabOptions {
-  url: "/pages/index/index" | "/pages/statistics/statistics"
+  url: "/pages/index/index" | "/pages/statistics/statistics" | "/pages/demo/demo"
 }
 
 type ReLaunchOptions = NavigateToOptions | SwitchTabOptions;
