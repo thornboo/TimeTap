@@ -21,14 +21,10 @@
     <view class="center w-full">
       <view
         class="rounded-full bg-gradient-to-b from-green-400 to-green-600 w-40 h-40 fixed bottom-40 center shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95"
-        :class="{ 'animate-pulse': !isChecked }"
         @click="handleTapIn"
       >
         <view class="text-white text-2xl font-bold">
-          {{ isChecked ? (workStatus === '上班' ? '上班啦' : '下班啦') : '打卡' }}
-        </view>
-        <view v-if="isChecked" class="text-white text-sm mt-1">
-          {{ checkTime }}
+          {{ isChecked ? '下班啦' : '上班啦' }}
         </view>
       </view>
       <view class="text-gray-600 text-sm mt-1">当前时间：{{ currentTime }}</view>
@@ -39,6 +35,14 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
 import { ref } from 'vue'
+import { clockIn, getHomePageInfo } from '@/service/index/index'
+import { onLoad } from '@dcloudio/uni-app'
+
+onLoad(() => {
+  getHomePageInfo('123').then((res) => {
+    console.log(res)
+  })
+})
 
 defineOptions({
   name: 'Home',
@@ -52,7 +56,6 @@ setInterval(() => {
 
 // 打卡状态
 const isChecked = ref(false)
-const workStatus = ref('上班') // 上班/下班状态
 const checkTime = ref('')
 const checkDays = ref(11)
 
@@ -61,23 +64,19 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 
 // 打卡操作
 function handleTapIn() {
-  if (isChecked.value) {
-    // 切换上班/下班状态
-    workStatus.value = workStatus.value === '上班' ? '下班' : '上班'
-    isChecked.value = false
-    return
-  }
-
-  isChecked.value = true
+  // 这里添加一个节流1分钟限制
+  isChecked.value = !isChecked.value
   checkTime.value = dayjs().format('HH:mm')
-  checkDays.value += 1
+
+  // 触发设备振动
+  uni.vibrateShort({})
 
   uni.showToast({
-    title: `${workStatus.value}打卡成功`,
+    title: `${isChecked.value ? '上班' : '下班'}打卡成功`,
     icon: 'success',
   })
 
-  // TODO: 调用API保存打卡记录
+  clockIn({ type: isChecked.value ? 'workStart' : 'workEnd', date: currentTime.value })
 }
 </script>
 
