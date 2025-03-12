@@ -9,10 +9,12 @@ interface clockInParams {
   date: string
 }
 
-export const getHomePageInfo = (id: string) => {
-  return http.get<IFooItem>(`/timeTap/homePageInfo/${id}`)
+// 打卡
+export const clockIn = (data: clockInParams) => {
+  return http.post<any>('/timeTap/clockIn', data)
 }
 
-export const clockIn = (data: clockInParams) => {
-  return http.post<IFooItem>('/timeTap/clockIn', data)
+// 获取首页信息
+export const getHomePageInfo = (id: string) => {
+  return http.get<any>(`/timeTap/homePageInfo/${id}`)
 }

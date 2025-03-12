@@ -15,7 +15,7 @@
   >
     <!--顶部-->
     <view class="flex flex-col items-center">
-      <span class="bg-blue">已打卡{{ checkDays }}天</span>
+      <span class="bg-[#99FFF3] p-4">已打卡{{ checkDays }}天</span>
     </view>
     <!--打卡区域-->
     <view class="center w-full">
@@ -24,7 +24,7 @@
         @click="handleTapIn"
       >
         <view class="text-white text-2xl font-bold">
-          {{ isChecked ? '下班啦' : '上班啦' }}
+          {{ checkStatus ? '下班啦' : '上班啦' }}
         </view>
       </view>
       <view class="text-gray-600 text-sm mt-1">当前时间：{{ currentTime }}</view>
@@ -38,12 +38,6 @@ import { ref } from 'vue'
 import { clockIn, getHomePageInfo } from '@/service/index/index'
 import { onLoad } from '@dcloudio/uni-app'
 
-onLoad(() => {
-  getHomePageInfo('123').then((res) => {
-    console.log(res)
-  })
-})
-
 defineOptions({
   name: 'Home',
 })
@@ -55,28 +49,32 @@ setInterval(() => {
 }, 1000)
 
 // 打卡状态
-const isChecked = ref(false)
-const checkTime = ref('')
-const checkDays = ref(11)
+const checkStatus = ref(false)
+// 打卡天数
+const checkDays = ref('0')
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
+onLoad(() => {
+  getHomePageInfo('123').then((res) => {
+    checkDays.value = res.data.clockInDays
+  })
+})
+
 // 打卡操作
 function handleTapIn() {
-  // 这里添加一个节流1分钟限制
-  isChecked.value = !isChecked.value
-  checkTime.value = dayjs().format('HH:mm')
+  // todo：这里添加一个节流1分钟限制
+  checkStatus.value = !checkStatus.value
 
+  clockIn({ type: checkStatus.value ? 'workStart' : 'workEnd', date: currentTime.value })
   // 触发设备振动
   uni.vibrateShort({})
-
+  // 成功成功提示
   uni.showToast({
-    title: `${isChecked.value ? '上班' : '下班'}打卡成功`,
-    icon: 'success',
+    title: `${checkStatus.value ? '上班' : '下班'}打卡成功`,
+    icon: 'none',
   })
-
-  clockIn({ type: isChecked.value ? 'workStart' : 'workEnd', date: currentTime.value })
 }
 </script>
 
